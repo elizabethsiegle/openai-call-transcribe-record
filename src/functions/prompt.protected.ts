@@ -31,7 +31,7 @@ export const handler: ServerlessFunctionSignature<Env, Request> = async function
     return callback(null, response)
   }
 
-  try {
+  try { // if event.prompt
     const openai = new OpenAIApi({apiKey: context.OPENAI_API_KEY})
 
     const completion = await openai.chat.completions.create({
@@ -42,7 +42,8 @@ export const handler: ServerlessFunctionSignature<Env, Request> = async function
       ],
     })
 
-    const gptResponse = completion.choices[0].message.content
+    let gptResponse = completion.choices[0].message.content
+    gptResponse += event.prompt // combine to send via HTTP for transcribing
     console.log(`Response >>> ${gptResponse}`)
 
     const response = new Twilio.Response()
